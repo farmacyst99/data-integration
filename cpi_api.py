@@ -1,6 +1,5 @@
 #! user/bin/python
 import requests
-import json
 import pandas as pd
 
 def fetch_consumer_price_index(series_id: str, api_key: str, observation_start: str, observation_end: str) -> pd.DataFrame:
@@ -21,26 +20,28 @@ def fetch_consumer_price_index(series_id: str, api_key: str, observation_start: 
     
     if response.status_code == 200:
         cpi_data = response.json()["observations"]
-        return pd.DataFrame(cpi_data)
+        cpi_df = pd.DataFrame(cpi_data)
+        cpi_df = cpi_df.drop(columns=['realtime_start', 'realtime_end'])
+        return cpi_df
     else:
         raise Exception(f"Failed to fetch data from FRED API: {response.status_code}")
     
 
 # Save to CSV
-def save_to_csv(df: pd.DataFrame, filename: str) -> None:
-    """
-    Saves a DataFrame to a CSV file.
+# def save_to_csv(df: pd.DataFrame, filename: str) -> None:
+#     """
+#     Saves a DataFrame to a CSV file.
     
-    Args:
-        df (pd.DataFrame): The DataFrame to save.
-        filename (str): The name of the CSV file.
-    """
-    new_df = pd.DataFrame()
-    new_df['date'] = df['date']
-    new_df['value'] = df['value']
+#     Args:
+#         df (pd.DataFrame): The DataFrame to save.
+#         filename (str): The name of the CSV file.
+#     """
+#     new_df = pd.DataFrame()
+#     new_df['date'] = df['date']
+#     new_df['value'] = df['value']
 
-    new_df.to_csv(filename, index=False)
-    print(f"Data saved to {filename}")
+#     new_df.to_csv(filename, index=False)
+#     print(f"Data saved to {filename}")
 
 # Example usage
 if __name__ == "__main__":
@@ -51,5 +52,5 @@ if __name__ == "__main__":
     observation_end = "2024-12-24"
     filename = "data/cpi_data.csv"
     cpi_df = fetch_consumer_price_index(series_id, api_key, observation_start, observation_end)
-    save_to_csv(cpi_df, filename)
+    # save_to_csv(cpi_df, filename)
     print(cpi_df.head())
