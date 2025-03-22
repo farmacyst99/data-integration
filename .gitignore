@@ -4,3 +4,4 @@ new-integration/
 .DS_Store
 *.py[cod]
 data/
+.vscode
