@@ -140,3 +140,55 @@ def validate_data(final_df):
             errors.append(f"Column {column} has incorrect type: expected {expected_type}, got {final_df[column].dtype}")
 
     return errors
+
+
+def send_email(errors):
+    '''
+    Send an email if data validation fails.
+    Parameters:
+    errors (list): List of errors to include in the email body.
+    '''
+    sender_email = os.getenv("SENDER_EMAIL")
+    receiver_email = os.getenv("RECEIVER_EMAIL")
+    password = os.getenv("EMAIL_PASSWORD")
+
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+    msg['Subject'] = "Data Validation Errors"
+
+    body = "Data Validation Errors:\n\n" + "\n".join(errors)
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(sender_email, password)
+            server.send_message(msg)
+        print("Email sent successfully.")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
+
+
+
+# Example usage
+if __name__ == "__main__":
+    # FRED API details
+    api_key = os.getenv("FRED_API")  # Replace with your actual API key
+    series_id_gas = "GASREGW"
+    series_id_cpi = "CPIAUCNS"
+    observation_start = "2024-01-07"
+    observation_end = "2024-12-24"
+
+    # Fetch and merge data
+    final_df = fetch_and_merge_data(series_id_gas, series_id_cpi, observation_start, observation_end, api_key)
+    
+    # Validate data
+    errors = validate_data(final_df)
+    
+    # Send email if there are validation errors
+    send_email(errors)
+    # Save the final DataFrame to CSV
+    final_df.to_csv('data/final_data_1.csv', index=False)
+
