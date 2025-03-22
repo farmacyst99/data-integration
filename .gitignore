@@ -5,3 +5,4 @@ new-integration/
 *.py[cod]
 data/
 .vscode
+.env
