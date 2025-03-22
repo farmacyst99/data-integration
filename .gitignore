@@ -1,6 +1,6 @@
 # Ignore Python cache files and directories
 __pycache__/
-integration/
+new-integration/
 .DS_Store
 *.py[cod]
 data/
