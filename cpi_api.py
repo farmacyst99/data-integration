@@ -22,6 +22,9 @@ def fetch_consumer_price_index(series_id: str, api_key: str, observation_start: 
         cpi_data = response.json()["observations"]
         cpi_df = pd.DataFrame(cpi_data)
         cpi_df = cpi_df.drop(columns=['realtime_start', 'realtime_end'])
+        #cpi_df['date'] = pd.to_datetime(cpi_df['date'])
+        #cpi_df['value'] = pd.to_numeric(cpi_df['value'], errors='coerce')
+        #cpi_df['value'] = cpi_df['value'].astype(float)
         return cpi_df
     else:
         raise Exception(f"Failed to fetch data from FRED API: {response.status_code}")
@@ -43,14 +46,14 @@ def fetch_consumer_price_index(series_id: str, api_key: str, observation_start: 
 #     new_df.to_csv(filename, index=False)
 #     print(f"Data saved to {filename}")
 
-# Example usage
-if __name__ == "__main__":
-    # FRED API details
-    api_key = "bd7ee64d6749a1bd68c358548a4a8c81"
-    series_id = "CPIAUCNS"
-    observation_start = "2024-01-07"
-    observation_end = "2024-12-24"
-    filename = "data/cpi_data.csv"
-    cpi_df = fetch_consumer_price_index(series_id, api_key, observation_start, observation_end)
-    # save_to_csv(cpi_df, filename)
-    print(cpi_df.head())
+# # Example usage
+# if __name__ == "__main__":
+#     # FRED API details
+#     api_key = "your_api_key_here"  # Replace with your actual API key
+#     series_id = "CPIAUCNS"
+#     observation_start = "2024-01-07"
+#     observation_end = "2024-12-24"
+#     filename = "data/cpi_data.csv"
+#     cpi_df = fetch_consumer_price_index(series_id, api_key, observation_start, observation_end)
+#     # save_to_csv(cpi_df, filename)
+#     print(cpi_df.info())

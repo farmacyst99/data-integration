@@ -1,7 +1,7 @@
 
 import requests
 import pandas as pd
-import json
+
 
 
 # # FRED API details
@@ -69,15 +69,15 @@ def fetch_gas_prices(api_key: str, series_id: str, observation_start: str, obser
 #     print(f"Data saved to {filename}")
 
 # Running the functions
-if __name__ == "__main__":
-    # FRED API details
-    api_key = "bd7ee64d6749a1bd68c358548a4a8c81"
-    series_id = "GASREGW"
-    observation_start = "2023-12-31"
-    observation_end = "2024-12-24"
-    # Fetch gas prices
-    gas_df = fetch_gas_prices(api_key, series_id, observation_start, observation_end)
-    # Save to CSV
-    # save_to_csv(gas_df, "data/gas_data.csv")
-    # Print the first few rows of the DataFrame
-    print(gas_df.head())
+# if __name__ == "__main__":
+#     # FRED API details
+#     api_key = "your_api_key_here"  # Replace with your actual API key
+#     series_id = "GASREGW"
+#     observation_start = "2023-12-31"
+#     observation_end = "2024-12-24"
+#     # Fetch gas prices
+#     gas_df = fetch_gas_prices(api_key, series_id, observation_start, observation_end)
+#     # Save to CSV
+#     # save_to_csv(gas_df, "data/gas_data.csv")
+#     # Print the first few rows of the DataFrame
+#     print(gas_df.head())
