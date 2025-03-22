@@ -46,7 +46,7 @@ def generate_sales_data():
     - region: The region where the sales occurred (default is 'USA').
     """
     np.random.seed(42)
-    weeks = pd.date_range(start='2024-01-07', periods=52, freq='W')
+    date = pd.date_range(start='2024-01-07', periods=52, freq='W')
     product_id = list(range(1, 51))
     a = list(string.ascii_lowercase + string.ascii_uppercase)
     product_name = []
@@ -54,8 +54,8 @@ def generate_sales_data():
         product_name.append(''.join(random.choices(a, k=3)))
     units_sold = np.random.randint(1, 100, size=(52, 50))
     price_per_unit = np.random.rand(50) * 120.324
-    repeated_values = np.repeat(weeks, 50)
-    df = pd.DataFrame(repeated_values, columns=['week'])
+    repeated_values = np.repeat(date, 50)
+    df = pd.DataFrame(repeated_values, columns=['date'])
     df['product_id'] = product_id * 52
     df['product_name'] = np.tile(product_name, 52)
     df['units_sold'] = units_sold.flatten()
@@ -67,12 +67,11 @@ def generate_sales_data():
     df['price_per_unit'] = df['price_per_unit'].astype(float)
     df['units_sold'] = df['units_sold'].astype(int)
     df['region'] = np.tile('USA', 2600)
-    df['date'] = df['week']
     return df
 
-if __name__ == "__main__":
-    sales_data = generate_sales_data()
-    sales_data.to_csv('data/sales_data.csv', index=False)
-    print("Sales data generated and saved to 'sales_data.csv'.")
-    print(sales_data.head())
+# if __name__ == "__main__":
+#     sales_data = generate_sales_data()
+#     sales_data.to_csv('data/sales_data.csv', index=False)
+#     print("Sales data generated and saved to 'sales_data.csv'.")
+#     print(sales_data.head())
     
