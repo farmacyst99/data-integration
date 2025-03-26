@@ -134,6 +134,22 @@ def validate_data(final_df):
         'gas_value': 'float64'
     }
 
+    # Check for spikes in values of any columns
+    threshold = 0.5  # Define a threshold for high change (e.g., 50%)
+    numeric_columns = ['price_per_unit', 'total_sales', 'cpi_value', 'gas_value']
+
+    for column in numeric_columns:
+        if column in final_df.columns:
+            # Calculate percentage change
+            final_df[f'{column}_pct_change'] = final_df[column].pct_change()
+            # Check for values exceeding the threshold
+            if final_df[f'{column}_pct_change'].abs().max() > threshold:
+                errors.append(f"High change detected in column {column}.")
+            # Drop the temporary percentage change column
+            final_df.drop(columns=[f'{column}_pct_change'], inplace=True)
+            
+
+    # Checking the data type of teh column
     for column, expected_type in expected_types.items():
         if final_df[column].dtype != expected_type:
             #raise ValueError(f"Column {column} has incorrect type: expected {expected_type}, got {final_df[column].dtype}")
@@ -191,4 +207,3 @@ if __name__ == "__main__":
     send_email(errors)
     # Save the final DataFrame to CSV
     final_df.to_csv('data/final_data_1.csv', index=False)
-
