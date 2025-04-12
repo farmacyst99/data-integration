@@ -47,6 +47,9 @@ def fetch_gas_prices(api_key: str, series_id: str, observation_start: str, obser
         gas_data = response.json()["observations"]
         gas_df = pd.DataFrame(gas_data)
         gas_df = gas_df.drop(columns=['realtime_start', 'realtime_end'])
+        gas_df['date'] = pd.to_datetime(gas_df['date'])
+        gas_df['value'] = pd.to_numeric(gas_df['value'], errors='coerce')
+        gas_df['value'] = gas_df['value'].astype(float)
         return gas_df
     else:
         raise Exception(f"Failed to fetch data from FRED API: {response.status_code}")
