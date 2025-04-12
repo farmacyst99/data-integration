@@ -7,6 +7,7 @@ import pandas as pd
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+# Load environment variables from .env file
 load_dotenv()
 
 
@@ -19,12 +20,16 @@ load_dotenv()
 # # Fetching gas prices and CPI data
 # # from FRED API
 
+    # Generate mock sales data
 # sales_df = generate_data.generate_sales_data()
+    # Fetch gas price data from FRED API
 # gas_df = gas_api.fetch_gas_prices(series_id=series_id_gas, api_key=api_key, observation_start=observation_start, observation_end=observation_end)
+    # Fetch CPI data from FRED API
 # cpi_df = cpi_api.fetch_consumer_price_index(series_id=series_id_cpi, api_key=api_key, observation_start=observation_start, observation_end=observation_end)
 
 
 # # Convert cpi_data['date'] to datetime format, then convert from monthly to weekly
+    # Convert CPI date to datetime and extract month
 # cpi_df['date'] = pd.to_datetime(cpi_df['date'])
 # #cpi_df.set_index(cpi_df['date'], inplace=True)
 # cpi_df['month'] = cpi_df['date'].dt.to_period('M')
@@ -36,15 +41,18 @@ load_dotenv()
 # #print(cpi_df)
 
 # # Merge sales_df and cpi_df on month
+    # Merge sales and CPI data on month
 # merged_df = pd.merge(sales_df, cpi_df, on='month', how='inner')
 # merged_df = merged_df.drop(columns=['month','date_y'])
 # merged_df.rename(columns={'date_x': 'date','value':'cpi_value'}, inplace=True)
 
 # # Now we have to obtain week number and create a new column for merged_df and gas_df
+    # Convert gas price date to datetime and extract week number
 # gas_df['date'] = pd.to_datetime(gas_df['date'])
 # gas_df['week_num'] = gas_df['date'].dt.isocalendar().week
 # merged_df['week_num'] = merged_df['date'].dt.isocalendar().week
 # # Merge gas_df and merged_df on week_num
+    # Merge combined sales+CPI data with gas price data on week number
 # final_df = pd.merge(merged_df, gas_df, on='week_num', how='inner')
 # final_df = final_df.drop(columns=['week_num','date_y'])
 # final_df.rename(columns={'date_x': 'week_start_date','value':'gas_value'}, inplace=True)
@@ -55,11 +63,15 @@ load_dotenv()
 # Convert the above process into a function
 def fetch_and_merge_data(series_id_gas, series_id_cpi, observation_start, observation_end, api_key):
     # Fetching gas prices and CPI data
+    # Generate mock sales data
     sales_df = generate_data.generate_sales_data()
+    # Fetch gas price data from FRED API
     gas_df = gas_api.fetch_gas_prices(series_id=series_id_gas, api_key=api_key, observation_start=observation_start, observation_end=observation_end)
+    # Fetch CPI data from FRED API
     cpi_df = cpi_api.fetch_consumer_price_index(series_id=series_id_cpi, api_key=api_key, observation_start=observation_start, observation_end=observation_end)
 
     # Convert cpi_data['date'] to datetime format, then convert from monthly to weekly
+    # Convert CPI date to datetime and extract month
     cpi_df['date'] = pd.to_datetime(cpi_df['date'])
     cpi_df['month'] = cpi_df['date'].dt.to_period('M')
 
@@ -68,16 +80,19 @@ def fetch_and_merge_data(series_id_gas, series_id_cpi, observation_start, observ
     sales_df['month'] = sales_df['date'].dt.to_period('M')
 
     # Merge sales_df and cpi_df on month
+    # Merge sales and CPI data on month
     merged_df = pd.merge(sales_df, cpi_df, on='month', how='inner')
     merged_df = merged_df.drop(columns=['month','date_y'])
     merged_df.rename(columns={'date_x': 'date','value':'cpi_value'}, inplace=True)
 
     # Now we have to obtain week number and create a new column for merged_df and gas_df
+    # Convert gas price date to datetime and extract week number
     gas_df['date'] = pd.to_datetime(gas_df['date'])
     gas_df['week_num'] = gas_df['date'].dt.isocalendar().week
     merged_df['week_num'] = merged_df['date'].dt.isocalendar().week
 
     # Merge gas_df and merged_df on week_num
+    # Merge combined sales+CPI data with gas price data on week number
     final_df = pd.merge(merged_df, gas_df, on='week_num', how='inner')
     final_df = final_df.drop(columns=['week_num','date_y'])
     final_df.rename(columns={'date_x': 'week_start_date','value':'gas_value'}, inplace=True)
@@ -85,6 +100,8 @@ def fetch_and_merge_data(series_id_gas, series_id_cpi, observation_start, observ
     return final_df
 
 
+
+# Validate the final DataFrame for required structure and consistency
 def validate_data(final_df):
     '''
     Validate the final DataFrame to ensure it meets the required criteria.
@@ -158,6 +175,8 @@ def validate_data(final_df):
     return errors
 
 
+
+# Send an alert email with validation errors if found
 def send_email(errors):
     '''
     Send an email if data validation fails.
@@ -189,6 +208,8 @@ def send_email(errors):
 
 
 # Example usage
+
+# Execute the main workflow when this script is run directly
 if __name__ == "__main__":
     # FRED API details
     api_key = os.getenv("FRED_API")  # Replace with your actual API key
