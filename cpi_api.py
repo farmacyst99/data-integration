@@ -22,9 +22,9 @@ def fetch_consumer_price_index(series_id: str, api_key: str, observation_start: 
         cpi_data = response.json()["observations"]
         cpi_df = pd.DataFrame(cpi_data)
         cpi_df = cpi_df.drop(columns=['realtime_start', 'realtime_end'])
-        #cpi_df['date'] = pd.to_datetime(cpi_df['date'])
-        #cpi_df['value'] = pd.to_numeric(cpi_df['value'], errors='coerce')
-        #cpi_df['value'] = cpi_df['value'].astype(float)
+        cpi_df['date'] = pd.to_datetime(cpi_df['date'])
+        cpi_df['value'] = pd.to_numeric(cpi_df['value'], errors='coerce')
+        cpi_df['value'] = cpi_df['value'].astype(float)
         return cpi_df
     else:
         raise Exception(f"Failed to fetch data from FRED API: {response.status_code}")
