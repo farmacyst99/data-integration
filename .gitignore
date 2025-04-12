@@ -6,3 +6,4 @@ new-integration/
 data/
 .vscode
 .env
+logfile.txt
